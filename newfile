@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+template=$(find "$HOME/Templates/" -mindepth 1 -maxdepth 1 -type f -print0 | sort --zero-terminated --reverse --ignore-case --dictionary-order | xargs -0 -n1 basename | fzf)
+ext="${template##*.}"
+
+read -r -p "Filename: " outstem
+
+outfile="$outstem"."$ext"
+
+if [ -f "$outfile" ]; then
+	echo -e "\e[1m\e[31mERROR:\e[0m\e[31m File \"$outfile\" already exist\e[0m"
+	exit 1
+fi
+
+cp "$HOME/Templates/$template" "$outfile"
