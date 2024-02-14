@@ -1,9 +1,25 @@
 #!/usr/bin/env bash
 
-template=$(find "$HOME/Templates/" -mindepth 1 -maxdepth 1 -type f -print0 | sort --zero-terminated --reverse --ignore-case --dictionary-order | xargs -0 -n1 basename | fzf)
+TEMPLATES_DIR="$(xdg-user-dir TEMPLATES)"
+
+template=$(find "${TEMPLATES_DIR}/" -mindepth 1 -maxdepth 1 -type f -print0 |
+  sort --zero-terminated --reverse --ignore-case --dictionary-order |
+  xargs -0 -n1 basename |
+  fzf)
+
+if [ -z "$template" ]; then
+  printf "No template selection. Exiting."
+  exit
+fi
+
 ext="${template##*.}"
 
 read -r -p "Filename: " outstem
+
+if [ -z "$outstem" ]; then
+  printf "No name for the new file. Exiting."
+  exit
+fi
 
 outfile="$outstem"."$ext"
 
@@ -12,4 +28,4 @@ if [ -f "$outfile" ]; then
 	exit 1
 fi
 
-cp "$HOME/Templates/$template" "$outfile"
+cp "${TEMPLATES_DIR}/${template}" "${outfile}"
