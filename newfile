@@ -2,6 +2,12 @@
 
 TEMPLATES_DIR="$(xdg-user-dir TEMPLATES)"
 
+# fallback in case `xdg-user-dir` is not found
+if [ "$?" -eq 127 ]; then
+  TEMPLATES_DIR="${HOME}/Templates"
+fi
+
+
 template=$(find "${TEMPLATES_DIR}/" -mindepth 1 -maxdepth 1 -type f -print0 |
   sort --zero-terminated --reverse --ignore-case --dictionary-order |
   xargs -0 -n1 basename |
